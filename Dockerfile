@@ -9,12 +9,15 @@ ENV PATH /opt/llvm/bin:$PATH
 CMD bash
 
 # Setup packages.
-RUN apt-get update && apt-get -y install cmake git build-essential vim python libboost-all-dev libeigen3-dev curl libtool autoconf automake uuid-dev build-essential libgl1-mesa-glx libgl1-mesa-dev xcb libglu1-mesa-dev apt-add-repository
+RUN apt-get update && apt-get -y install cmake git build-essential vim python libboost-all-dev libeigen3-dev curl libtool autoconf automake uuid-dev build-essential libgl1-mesa-glx libgl1-mesa-dev xcb libglu1-mesa-dev software-properties-common xauth dbus-x11 x11vnc xvfb
+RUN mkdir ~/.vnc
+RUN x11vnc -storepasswd 1234 ~/.vnc/passwd
+#RUN apt-get -y install apt-add-repository
 # add repository with qt5
 RUN apt-add-repository ppa:ubuntu-sdk-team/ppa
 # install qt5
 RUN apt-get -y install qtdeclarative5-dev
-
+EXPOSE 5900
 # Copy install-clang over.
 #ADD . /opt/install-clang
 
@@ -33,8 +36,7 @@ RUN /bin/sh -c 'git clone https://github.com/schuhschuh/cmake-basis.git -b devel
 
 RUN /bin/sh -c 'git clone https://github.com/google/flatbuffers.git /root/flatbuffers && cd /root/ && mkdir build-flatbuffers && cd build-flatbuffers && cmake ../flatbuffers -DCMAKE_INSTALL_PREFIX=/usr/local && make && make install'
 
-RUN /bin/sh -c 'curl -O http://coppeliarobotics.com/V-REP_PRO_EDU_V3_2_0_rev6_64_Linux.tar.gz && \
-                       tar zxvf V-REP_PRO_EDU_V3_2_0_rev6_64_Linux.tar.gz'
+RUN /bin/sh -c 'cd ~ && curl -O http://coppeliarobotics.com/V-REP_PRO_EDU_V3_2_0_rev6_64_Linux.tar.gz && tar zxvf V-REP_PRO_EDU_V3_2_0_rev6_64_Linux.tar.gz'
 
 RUN /bin/sh -c 'git clone https://github.com/ahundt/robone.git -b develop /root/robone/ && cd /root/robone && mkdir build && cd build '
 
